@@ -21,15 +21,16 @@ import java.awt.event.*;
 public class JNotePad implements ActionListener
 {
    //Create instance of frame, area, and file
-   private JFrame jfrm;
-   private JTextArea jta;
-   private File file;
+   JFrame jfrm;
+   JTextArea jta;
+   File file;
+   String openedFileName;
   
    //-------------------------------------------------------------------------- 
    JNotePad()
    {
       //Set name of frame
-      jfrm = new JFrame(getFileName());
+      jfrm = new JFrame(getOpenedFileName());
   
       //Set frame size and layout
       jfrm.setSize(900, 600);
@@ -51,18 +52,16 @@ public class JNotePad implements ActionListener
    /*Returns the name of the file so it can be placed as title of frame.
     if the file name is null then set the name of the frame to "Untitled else
     set the name of the frame to the name of the file.*/
-   public String getFileName() throws NullPointerException
+   public String getOpenedFileName() throws NullPointerException
    {
-      String fileName;
-      try
-      {
-         fileName = file.getName();
+      
+      try {
+         openedFileName = file.getName();
       }
-      catch(NullPointerException e)
-      {
-         fileName = "Lam Nguyen's JNotepad";
+      catch(NullPointerException e) {
+         openedFileName = "JNotepad";
       }
-      return fileName;
+      return openedFileName;
    }
    //--------------------------------------------------------------------------
    /*Add the text area to the frame. And add scroll bar*/
@@ -160,7 +159,7 @@ public class JNotePad implements ActionListener
       {
          new JNotePad();
       }
-      else if(ae.getActionCommand().equals("Open"))
+      else if(ae.getActionCommand().equals("Open..."))
       {
          openJFileChooser();
       }
@@ -174,17 +173,24 @@ public class JNotePad implements ActionListener
       }
       else if (ae.getActionCommand().equals("Save"))
       {
-         //Set a name to save file     
-         String str = JOptionPane.showInputDialog(jfrm, "Save As..", "Save As..", JOptionPane.YES_NO_CANCEL_OPTION);
-         jfrm.setTitle(str);
-         saveFile(str);
+         if (!openedFileName.equals("JNotepad")) {
+        	 saveFile(openedFileName);
+        	 System.out.println(openedFileName);
+         }
+         else {
+             //Set a name to save file     
+             String str = JOptionPane.showInputDialog(jfrm, "Save As..", "Save As..", JOptionPane.YES_NO_CANCEL_OPTION);
+             jfrm.setTitle(str);
+             saveFile(str);
+         }
       }
       else if (ae.getActionCommand().equals("Save As..."))
       {
          //Set a name to save file     
-         String str = JOptionPane.showInputDialog(jfrm, "Save As..", "Save As..", JOptionPane.YES_NO_CANCEL_OPTION);
-         jfrm.setTitle(str);
-         saveFile(str);
+//         String str = JOptionPane.showInputDialog(jfrm, "Save As..", "Save As..", JOptionPane.YES_NO_CANCEL_OPTION);
+//         jfrm.setTitle(str);
+//         saveFile(str);
+    	  saveJFileChooser();
       }
    }
    //--------------------------------------------------------------------------
@@ -193,18 +199,15 @@ public class JNotePad implements ActionListener
     */
    public void openJFileChooser() 
    {
-      try
-      {
+      try {
          JFileChooser chooser = new JFileChooser();
          chooser.setFileFilter(new TextFileFilter());
          int result = chooser.showOpenDialog(null);
-         if(result != JFileChooser.APPROVE_OPTION)
-         {
+         if(result != JFileChooser.APPROVE_OPTION) {
             jta.setText("");
             JOptionPane.showMessageDialog(jfrm, "No file selected");
          }
-         else
-         {
+         else {
             File file = chooser.getSelectedFile();
             Scanner scan = new Scanner(file);
             String content = "";
@@ -222,6 +225,28 @@ public class JNotePad implements ActionListener
          JOptionPane.showMessageDialog(jfrm, e);   
       }
    }
+   
+   public void saveJFileChooser() {
+	   JFileChooser fileChooser = new JFileChooser();
+	   fileChooser.setDialogTitle("Specify a file to save");   
+	    
+	   int userSelection = fileChooser.showSaveDialog(jfrm);
+	    
+	   if (userSelection == JFileChooser.APPROVE_OPTION) {
+	       File fileToSave = fileChooser.getSelectedFile();
+	       System.out.println("Save as file: " + fileToSave.getAbsolutePath());
+	       try {
+	    	   BufferedWriter out = new BufferedWriter(new FileWriter(fileToSave));
+	           out.write(jta.getText());
+	           out.close();
+	       }      
+	       catch(Exception e) {
+	           JOptionPane.showMessageDialog(jfrm, "Cannot save file...");
+	           jfrm.setTitle("JNotepad");
+	       }
+	   }
+   }
+   
    //--------------------------------------------------------------------------
    /*Writes file to and output file to save*/
    public void saveFile(String fname)
@@ -237,7 +262,7 @@ public class JNotePad implements ActionListener
       {
          System.out.println(jta.getSelectedText());
          JOptionPane.showMessageDialog(jfrm, "Cannot save file...");
-         jfrm.setTitle("Untitled");
+         jfrm.setTitle("JNotepad");
       }
    }
    //--------------------------------------------------------------------------
