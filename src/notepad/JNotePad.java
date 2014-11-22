@@ -23,7 +23,7 @@ public class JNotePad implements ActionListener
    //Create instance of frame, area, and file
    JFrame jfrm;
    JTextArea jta;
-   File file;
+   File myFile;
    String openedFileName;
   
    //-------------------------------------------------------------------------- 
@@ -52,11 +52,10 @@ public class JNotePad implements ActionListener
    /*Returns the name of the file so it can be placed as title of frame.
     if the file name is null then set the name of the frame to "Untitled else
     set the name of the frame to the name of the file.*/
-   public String getOpenedFileName() throws NullPointerException
-   {
+   public String getOpenedFileName() throws NullPointerException {
       
       try {
-         openedFileName = file.getName();
+         openedFileName = myFile.getName();
       }
       catch(NullPointerException e) {
          openedFileName = "JNotepad";
@@ -130,8 +129,7 @@ public class JNotePad implements ActionListener
         JMenu jmHelp = new JMenu("Help");
         JMenuItem jmiAbout = new JMenuItem("About");
         jmHelp.add(jmiAbout);        
-        menu.add(jmHelp);
-        
+        menu.add(jmHelp);      
         
         
         jfrm.setJMenuBar(menu);
@@ -155,41 +153,17 @@ public class JNotePad implements ActionListener
    /*Action is triggered by selecting an item in the menu bar drop down list.*/
    public void actionPerformed(ActionEvent ae) 
    {
-      if(ae.getActionCommand().equals("New"))
-      {
-         new JNotePad();
-      }
-      else if(ae.getActionCommand().equals("Open..."))
-      {
-         openJFileChooser();
-      }
-      else if(ae.getActionCommand().equals("Close"))
-      {
-         System.exit(0);
-      }
-      else if(ae.getActionCommand().equals("About"))
-      {
+      if(ae.getActionCommand().equals("New")) new JNotePad();
+      else if(ae.getActionCommand().equals("Open...")) openJFileChooser();
+      else if(ae.getActionCommand().equals("Close")) System.exit(0); 
+      else if(ae.getActionCommand().equals("About")) {
          JOptionPane.showMessageDialog(jfrm, "(c) Tello 2011");
       }
-      else if (ae.getActionCommand().equals("Save"))
-      {
-         if (!openedFileName.equals("JNotepad")) {
-        	 saveFile(openedFileName);
-        	 System.out.println(openedFileName);
-         }
-         else {
-             //Set a name to save file     
-             String str = JOptionPane.showInputDialog(jfrm, "Save As..", "Save As..", JOptionPane.YES_NO_CANCEL_OPTION);
-             jfrm.setTitle(str);
-             saveFile(str);
-         }
+      else if (ae.getActionCommand().equals("Save")) {
+    	  if (myFile==null) saveJFileChooser();
+    	  else saveFileOverwrite();
       }
-      else if (ae.getActionCommand().equals("Save As..."))
-      {
-         //Set a name to save file     
-//         String str = JOptionPane.showInputDialog(jfrm, "Save As..", "Save As..", JOptionPane.YES_NO_CANCEL_OPTION);
-//         jfrm.setTitle(str);
-//         saveFile(str);
+      else if (ae.getActionCommand().equals("Save As...")) {
     	  saveJFileChooser();
       }
    }
@@ -200,45 +174,52 @@ public class JNotePad implements ActionListener
    public void openJFileChooser() 
    {
       try {
-         JFileChooser chooser = new JFileChooser();
-         chooser.setFileFilter(new TextFileFilter());
-         int result = chooser.showOpenDialog(null);
-         if(result != JFileChooser.APPROVE_OPTION) {
+         JFileChooser openChooser = new JFileChooser();
+         openChooser.setFileFilter(new TextFileFilter());
+         int userSelection = openChooser.showOpenDialog(null);
+         if(userSelection != JFileChooser.APPROVE_OPTION) {
             jta.setText("");
             JOptionPane.showMessageDialog(jfrm, "No file selected");
          }
          else {
-            File file = chooser.getSelectedFile();
-            Scanner scan = new Scanner(file);
+            File openedFile = openChooser.getSelectedFile();
+            Scanner scan = new Scanner(openedFile);
             String content = "";
-            while(scan.hasNext())
-            {
+            while(scan.hasNext()) {
                content += scan.nextLine() + "\n";            
             }
             jta.setText(content);
-            String title = chooser.getName(file);
+            String title = openChooser.getName(openedFile);
             jfrm.setTitle(title);
+            myFile = openedFile;
          }
       }
-      catch(IOException e)
-      {
+      catch(IOException e) {
          JOptionPane.showMessageDialog(jfrm, e);   
       }
    }
    
    public void saveJFileChooser() {
-	   JFileChooser fileChooser = new JFileChooser();
-	   fileChooser.setDialogTitle("Specify a file to save");   
-	    
-	   int userSelection = fileChooser.showSaveDialog(jfrm);
+	   JFileChooser saveChooser = new JFileChooser();
+	   saveChooser.setFileFilter(new TextFileFilter());
+	   int userSelection = saveChooser.showSaveDialog(jfrm);
 	    
 	   if (userSelection == JFileChooser.APPROVE_OPTION) {
-	       File fileToSave = fileChooser.getSelectedFile();
+	       File fileToSave = saveChooser.getSelectedFile();
 	       System.out.println("Save as file: " + fileToSave.getAbsolutePath());
 	       try {
-	    	   BufferedWriter out = new BufferedWriter(new FileWriter(fileToSave));
-	           out.write(jta.getText());
+	    	   BufferedWriter out = new BufferedWriter(new FileWriter(fileToSave+".txt"));	        
+	           out.write(jta.getText());	
 	           out.close();
+	           myFile = fileToSave;
+//		            Scanner scan = new Scanner(myFile+".txt");
+//		            String content = "";
+//		            while(scan.hasNext()) {
+//		               content += scan.nextLine() + "\n";            
+//		            }
+//		            jta.setText(content);
+	           jfrm.setTitle(getOpenedFileName());
+	           
 	       }      
 	       catch(Exception e) {
 	           JOptionPane.showMessageDialog(jfrm, "Cannot save file...");
@@ -247,25 +228,18 @@ public class JNotePad implements ActionListener
 	   }
    }
    
-   //--------------------------------------------------------------------------
-   /*Writes file to and output file to save*/
-   public void saveFile(String fname)
-   {
-      try
-      {
-         FileWriter writer = new FileWriter(fname + ".txt");
-         BufferedWriter out = new BufferedWriter(writer);
-         out.write(jta.getText());
-         out.close();
-      }
-      catch(Exception e)
-      {
-         System.out.println(jta.getSelectedText());
-         JOptionPane.showMessageDialog(jfrm, "Cannot save file...");
-         jfrm.setTitle("JNotepad");
-      }
+   public void saveFileOverwrite() {
+       try {
+    	   BufferedWriter out = new BufferedWriter(new FileWriter(myFile));
+           out.write(jta.getText());
+           out.close();
+       }      
+       catch(Exception e) {
+           JOptionPane.showMessageDialog(jfrm, "Cannot save file...");
+           jfrm.setTitle("JNotepad");
+       }
    }
-   //--------------------------------------------------------------------------
+   
    public static void main(String [] args)
    {
       SwingUtilities.invokeLater(new Runnable() { 
@@ -274,6 +248,4 @@ public class JNotePad implements ActionListener
          }
       });
    }
-   //--------------------------------------------------------------------------
 }
-///////////////////////////////////////////////////////////////////////////////
