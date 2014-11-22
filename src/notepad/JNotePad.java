@@ -212,12 +212,6 @@ public class JNotePad implements ActionListener
 	           out.write(jta.getText());	
 	           out.close();
 	           myFile = fileToSave;
-//		            Scanner scan = new Scanner(myFile+".txt");
-//		            String content = "";
-//		            while(scan.hasNext()) {
-//		               content += scan.nextLine() + "\n";            
-//		            }
-//		            jta.setText(content);
 	           jfrm.setTitle(getOpenedFileName());
 	           
 	       }      
