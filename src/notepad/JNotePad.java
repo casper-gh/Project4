@@ -1,7 +1,15 @@
 package notepad;
+
 //
-// Description: A simple notepad program.
+//Name:    Nguyen, Lam
+//Project: #4
+//Due:     
+//Course:  CS-245-01-w14
 //
+//Description:
+//    
+//
+
 import javax.swing.*;
 
 import java.awt.*;
@@ -9,12 +17,12 @@ import java.io.*;
 import java.util.Scanner;
 import java.io.File.*;
 import java.awt.event.*;
-///////////////////////////////////////////////////////////////////////////////
+
 public class JNotePad implements ActionListener
 {
    //Create instance of frame, area, and file
    private JFrame jfrm;
-   private JTextArea jarea;
+   private JTextArea jta;
    private File file;
   
    //-------------------------------------------------------------------------- 
@@ -52,7 +60,7 @@ public class JNotePad implements ActionListener
       }
       catch(NullPointerException e)
       {
-         fileName = "Untitled";
+         fileName = "Lam Nguyen's JNotepad";
       }
       return fileName;
    }
@@ -60,8 +68,8 @@ public class JNotePad implements ActionListener
    /*Add the text area to the frame. And add scroll bar*/
    public void setTextArea()
    {
-      jarea = new JTextArea();
-      JScrollPane jsp = new JScrollPane(jarea);
+      jta = new JTextArea();
+      JScrollPane jsp = new JScrollPane(jta);
       jfrm.add(jsp);
    }
    //--------------------------------------------------------------------------
@@ -71,38 +79,78 @@ public class JNotePad implements ActionListener
    public void setMenuBar()
    {
         JMenuBar menu = new JMenuBar();
-        JMenu file = new JMenu("File");
-        file.add(new JSeparator());
-        JMenu help = new JMenu("Help");
-        JMenuItem newSubMenu = new JMenuItem("New");
-        JMenuItem open = new JMenuItem("Open");
-        JMenuItem save = new JMenuItem("Save");
-        JMenuItem close = new JMenuItem("Close");
-        close.add(new JSeparator());
-        JMenuItem about = new JMenuItem("About");
-        file.add(newSubMenu);
-        file.add(open);
-        file.add(save);
-        file.add(close);
-        close.add(new JSeparator());
-        help.add(about);
-        menu.add(file);
-        menu.add(help);
+        
+        // File menu
+        JMenu jmFile = new JMenu("File");         
+        JMenuItem jmiNew = new JMenuItem("New");
+        JMenuItem jmiOpen = new JMenuItem("Open...");
+        JMenuItem jmiSave = new JMenuItem("Save");
+        JMenuItem jmiSaveAs = new JMenuItem("Save As...");
+        JMenuItem jmiPageSetup = new JMenuItem("Page Setup...");
+        JMenuItem jmiPrint = new JMenuItem("Print...");
+        JMenuItem jmiExit = new JMenuItem("Exit");        
+        jmFile.add(jmiNew);
+        jmFile.add(jmiOpen);
+        jmFile.add(jmiSave);
+        jmFile.add(jmiSaveAs);
+        jmFile.add(new JSeparator());
+        jmFile.add(jmiExit);
+        menu.add(jmFile);
+        
+        // Edit menu
+        JMenu jmiEdit = new JMenu("Edit");
+        JMenuItem jmiUndo = new JMenuItem("Undo");
+        JMenuItem jmiCut = new JMenuItem("Cut");
+        JMenuItem jmiCopy = new JMenuItem("Copy");
+        JMenuItem jmiPaste = new JMenuItem("Paste");
+        JMenuItem jmiDelete = new JMenuItem("Delete");        
+        JMenuItem jmiFind = new JMenuItem("Find...");
+        JMenuItem jmiFindNext = new JMenuItem("Find Next");
+        JMenuItem jmiReplace = new JMenuItem("Replace...");
+        JMenuItem jmiGoTo = new JMenuItem("Go To...");
+        JMenuItem jmiSelectAll = new JMenuItem("Select All");
+        JMenuItem jmiTimeDate = new JMenuItem("Time/Date");
+        jmiEdit.add(jmiEdit);
+        jmiEdit.add(jmiUndo);
+        jmiEdit.add(new JSeparator());
+        jmiEdit.add(jmiCut);
+        jmiEdit.add(jmiCopy);
+        jmiEdit.add(jmiPaste);
+        jmiEdit.add(jmiDelete);
+        jmiEdit.add(new JSeparator());
+        jmiEdit.add(jmiFind);
+        jmiEdit.add(jmiFindNext);
+        jmiEdit.add(jmiReplace);
+        jmiEdit.add(jmiGoTo);
+        jmiEdit.add(new JSeparator());
+        jmiEdit.add(jmiSelectAll);
+        jmiEdit.add(jmiTimeDate);
+        menu.add(jmiEdit);
+        
+        // Help menu
+        JMenu jmHelp = new JMenu("Help");
+        JMenuItem jmiAbout = new JMenuItem("About");
+        jmHelp.add(jmiAbout);        
+        menu.add(jmHelp);
+        
+        
+        
         jfrm.setJMenuBar(menu);
         //Set mnemonic for File, Edit, About
-        file.setMnemonic(KeyEvent.VK_F);
-        help.setMnemonic(KeyEvent.VK_H);
+        jmFile.setMnemonic(KeyEvent.VK_F);
+        jmHelp.setMnemonic(KeyEvent.VK_H);
         //Set accelerator for items in menu bar
-        newSubMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,ActionEvent.CTRL_MASK));
-        open.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,ActionEvent.CTRL_MASK));
-        close.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W,ActionEvent.CTRL_MASK));
-        about.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
-        save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,ActionEvent.CTRL_MASK));
-        newSubMenu.addActionListener(this);
-        open.addActionListener(this);
-        close.addActionListener(this);
-        save.addActionListener(this);
-        about.addActionListener(this);
+        jmiNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,ActionEvent.CTRL_MASK));
+        jmiOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,ActionEvent.CTRL_MASK));
+        jmiExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W,ActionEvent.CTRL_MASK));
+        jmiAbout.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
+        jmiSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,ActionEvent.CTRL_MASK));
+        jmiNew.addActionListener(this);
+        jmiOpen.addActionListener(this);
+        jmiExit.addActionListener(this);
+        jmiSave.addActionListener(this);
+        jmiSaveAs.addActionListener(this);
+        jmiAbout.addActionListener(this);
    }   
    //--------------------------------------------------------------------------
    /*Action is triggered by selecting an item in the menu bar drop down list.*/
@@ -124,7 +172,14 @@ public class JNotePad implements ActionListener
       {
          JOptionPane.showMessageDialog(jfrm, "(c) Tello 2011");
       }
-      else
+      else if (ae.getActionCommand().equals("Save"))
+      {
+         //Set a name to save file     
+         String str = JOptionPane.showInputDialog(jfrm, "Save As..", "Save As..", JOptionPane.YES_NO_CANCEL_OPTION);
+         jfrm.setTitle(str);
+         saveFile(str);
+      }
+      else if (ae.getActionCommand().equals("Save As..."))
       {
          //Set a name to save file     
          String str = JOptionPane.showInputDialog(jfrm, "Save As..", "Save As..", JOptionPane.YES_NO_CANCEL_OPTION);
@@ -145,7 +200,7 @@ public class JNotePad implements ActionListener
          int result = chooser.showOpenDialog(null);
          if(result != JFileChooser.APPROVE_OPTION)
          {
-            jarea.setText("");
+            jta.setText("");
             JOptionPane.showMessageDialog(jfrm, "No file selected");
          }
          else
@@ -157,7 +212,7 @@ public class JNotePad implements ActionListener
             {
                content += scan.nextLine() + "\n";            
             }
-            jarea.setText(content);
+            jta.setText(content);
             String title = chooser.getName(file);
             jfrm.setTitle(title);
          }
@@ -175,12 +230,12 @@ public class JNotePad implements ActionListener
       {
          FileWriter writer = new FileWriter(fname + ".txt");
          BufferedWriter out = new BufferedWriter(writer);
-         out.write(jarea.getText());
+         out.write(jta.getText());
          out.close();
       }
       catch(Exception e)
       {
-         System.out.println(jarea.getSelectedText());
+         System.out.println(jta.getSelectedText());
          JOptionPane.showMessageDialog(jfrm, "Cannot save file...");
          jfrm.setTitle("Untitled");
       }

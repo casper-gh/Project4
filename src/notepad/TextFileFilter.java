@@ -1,10 +1,7 @@
 package notepad;
 import javax.swing.filechooser.FileFilter;
 import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-///////////////////////////////////////////////////////////////////////////////
+
 public class TextFileFilter extends FileFilter
 {
    public boolean accept(File file) {
@@ -19,4 +16,3 @@ public class TextFileFilter extends FileFilter
     }
    
 }
-///////////////////////////////////////////////////////////////////////////////
