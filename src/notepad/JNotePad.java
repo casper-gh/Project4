@@ -80,11 +80,11 @@ public class JNotePad implements ActionListener
         
         // File menu
         JMenu jmFile = new JMenu("File");         
-        JMenuItem jmiNew = new JMenuItem("New");
+        JMenuItem jmiNew = new JMenuItem("New");        
         JMenuItem jmiOpen = new JMenuItem("Open...");
         JMenuItem jmiSave = new JMenuItem("Save");
         JMenuItem jmiSaveAs = new JMenuItem("Save As...");
-        JMenuItem jmiPageSetup = new JMenuItem("Page Setup...");
+        JMenuItem jmiPageSetup = new JMenuItem("Page Setup...");        
         JMenuItem jmiPrint = new JMenuItem("Print...");
         JMenuItem jmiExit = new JMenuItem("Exit");        
         jmFile.add(jmiNew);
@@ -92,8 +92,28 @@ public class JNotePad implements ActionListener
         jmFile.add(jmiSave);
         jmFile.add(jmiSaveAs);
         jmFile.add(new JSeparator());
+        jmFile.add(jmiPageSetup);
+        jmFile.add(jmiPrint);
+        jmFile.add(new JSeparator());
         jmFile.add(jmiExit);
-        menu.add(jmFile);
+        menu.add(jmFile);          
+                
+        //Set mnemonic 
+        jmiNew.setMnemonic(KeyEvent.VK_N);
+        jmiPageSetup.setMnemonic(KeyEvent.VK_U);
+        jmFile.setMnemonic(KeyEvent.VK_F);        
+        jmiExit.setMnemonic(KeyEvent.VK_E);
+        
+        //Set accelerator 
+        jmiNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,ActionEvent.CTRL_MASK));
+        jmiOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,ActionEvent.CTRL_MASK));        
+        jmiSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,ActionEvent.CTRL_MASK));
+        jmiPrint.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,ActionEvent.CTRL_MASK));
+        jmiNew.addActionListener(this);
+        jmiOpen.addActionListener(this);
+        jmiExit.addActionListener(this);
+        jmiSave.addActionListener(this);
+        jmiSaveAs.addActionListener(this);
         
         // Edit menu
         JMenu jmiEdit = new JMenu("Edit");
@@ -125,39 +145,74 @@ public class JNotePad implements ActionListener
         jmiEdit.add(jmiTimeDate);
         menu.add(jmiEdit);
         
+        //Set accelerator 
+        jmiEdit.setMnemonic(KeyEvent.VK_E); 
+        jmiCut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X,ActionEvent.CTRL_MASK));
+        jmiCopy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,ActionEvent.CTRL_MASK));
+        jmiPaste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,ActionEvent.CTRL_MASK));       
+        jmiDelete.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0));
+        jmiFind.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F,ActionEvent.CTRL_MASK)); 
+        jmiReplace.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H,ActionEvent.CTRL_MASK));
+        jmiGoTo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G,ActionEvent.CTRL_MASK)); 
+        jmiSelectAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A,ActionEvent.CTRL_MASK)); 
+        jmiTimeDate.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5,0));
+        
+        // Set action listener
+        jmiCut.addActionListener(this);
+        jmiCopy.addActionListener(this);
+        jmiPaste.addActionListener(this);
+        jmiDelete.addActionListener(this);
+        jmiFind.addActionListener(this);
+        jmiFindNext.addActionListener(this);
+        jmiTimeDate.addActionListener(this);       
+        
+        // -- Format menu --
+        JMenu jmiFormat = new JMenu("Format");
+        JMenuItem WordWrap = new JMenuItem("Word Wrap");
+        JMenuItem Font = new JMenuItem("Font...");
+        jmiFormat.add(WordWrap);
+        jmiFormat.add(Font);
+        
+        // Set mnemonic
+        jmiFormat.setMnemonic(KeyEvent.VK_O); 
+        WordWrap.setMnemonic(KeyEvent.VK_W); 
+        Font.setMnemonic(KeyEvent.VK_F);         
+        menu.add(jmiFormat);              
+        
+        // Set action listener
+        WordWrap.addActionListener(this);
+        Font.addActionListener(this);
+        
+        // -- Help view --
+        JMenu jmView = new JMenu("View");
+        JMenuItem jmiStatusBar = new JMenuItem("Status Bar");
+        jmView.add(jmiStatusBar);        
+        menu.add(jmView);  
+        jmView.setMnemonic(KeyEvent.VK_V);
+        jmiStatusBar.setMnemonic(KeyEvent.VK_S); 
+        
         // Help menu
         JMenu jmHelp = new JMenu("Help");
-        JMenuItem jmiAbout = new JMenuItem("About");
-        jmHelp.add(jmiAbout);        
-        menu.add(jmHelp);      
+        JMenuItem jmiHelp = new JMenuItem("View Help");
+        JMenuItem jmiAbout = new JMenuItem("About JNotepad");        
+        jmHelp.add(jmiHelp); 
+        jmHelp.add(new JSeparator());
+        jmHelp.add(jmiAbout);               
+        jmiAbout.addActionListener(this);        
+        menu.add(jmHelp);
         
-        
+        // Add menu to frame
         jfrm.setJMenuBar(menu);
-        //Set mnemonic for File, Edit, About
-        jmFile.setMnemonic(KeyEvent.VK_F);
-        jmHelp.setMnemonic(KeyEvent.VK_H);
-        //Set accelerator for items in menu bar
-        jmiNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,ActionEvent.CTRL_MASK));
-        jmiOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,ActionEvent.CTRL_MASK));
-        jmiExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W,ActionEvent.CTRL_MASK));
-        jmiAbout.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
-        jmiSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,ActionEvent.CTRL_MASK));
-        jmiNew.addActionListener(this);
-        jmiOpen.addActionListener(this);
-        jmiExit.addActionListener(this);
-        jmiSave.addActionListener(this);
-        jmiSaveAs.addActionListener(this);
-        jmiAbout.addActionListener(this);
    }   
-   //--------------------------------------------------------------------------
+  
    /*Action is triggered by selecting an item in the menu bar drop down list.*/
    public void actionPerformed(ActionEvent ae) 
    {
       if(ae.getActionCommand().equals("New")) new JNotePad();
       else if(ae.getActionCommand().equals("Open...")) openJFileChooser();
-      else if(ae.getActionCommand().equals("Close")) System.exit(0); 
-      else if(ae.getActionCommand().equals("About")) {
-         JOptionPane.showMessageDialog(jfrm, "(c) Tello 2011");
+      else if(ae.getActionCommand().equals("Exit")) System.exit(0); 
+      else if(ae.getActionCommand().equals("About JNotepad")) {
+         JOptionPane.showMessageDialog(jfrm, "(c) Lam Nguyen");
       }
       else if (ae.getActionCommand().equals("Save")) {
     	  if (myFile==null) saveJFileChooser();
@@ -167,7 +222,7 @@ public class JNotePad implements ActionListener
     	  saveJFileChooser();
       }
    }
-   //--------------------------------------------------------------------------
+   
    /*Opens a selected file and rename the frame to the corresponding file
     * name.
     */
