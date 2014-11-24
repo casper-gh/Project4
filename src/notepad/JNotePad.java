@@ -11,7 +11,6 @@ package notepad;
 //
 
 import javax.swing.*;
-
 import java.awt.*;
 import java.io.*;
 import java.util.Scanner;
@@ -164,7 +163,8 @@ public class JNotePad implements ActionListener
         jmiDelete.addActionListener(this);
         jmiFind.addActionListener(this);
         jmiFindNext.addActionListener(this);
-        jmiTimeDate.addActionListener(this);       
+        jmiTimeDate.addActionListener(this);   
+        jmiSelectAll.addActionListener(this);   
         
         // -- Format menu --
         JMenu jmiFormat = new JMenu("Format");
@@ -220,6 +220,10 @@ public class JNotePad implements ActionListener
       }
       else if (ae.getActionCommand().equals("Save As...")) {
     	  saveJFileChooser();
+      }
+      
+      if (ae.getActionCommand().equals("Select All")) {
+    	  jta.selectAll();
       }
    }
    
