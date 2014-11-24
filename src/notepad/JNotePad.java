@@ -11,10 +11,14 @@ package notepad;
 //
 
 import javax.swing.*;
+
+import notepad3.Notepad;
+
 import java.awt.*;
 import java.io.*;
 import java.util.Scanner;
 import java.io.File.*;
+import java.awt.datatransfer.*;
 import java.awt.event.*;
 
 public class JNotePad implements ActionListener
@@ -24,6 +28,7 @@ public class JNotePad implements ActionListener
    JTextArea jta;
    File myFile;
    String openedFileName;
+   Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
   
    //-------------------------------------------------------------------------- 
    JNotePad()
@@ -208,6 +213,7 @@ public class JNotePad implements ActionListener
    /*Action is triggered by selecting an item in the menu bar drop down list.*/
    public void actionPerformed(ActionEvent ae) 
    {
+	  // File menu
       if(ae.getActionCommand().equals("New")) new JNotePad();
       else if(ae.getActionCommand().equals("Open...")) openJFileChooser();
       else if(ae.getActionCommand().equals("Exit")) System.exit(0); 
@@ -222,7 +228,30 @@ public class JNotePad implements ActionListener
     	  saveJFileChooser();
       }
       
-      if (ae.getActionCommand().equals("Select All")) {
+      // Edit menu
+      if (ae.getActionCommand().equals("Cut")) {
+    	  String selection = jta.getSelectedText();
+          StringSelection clipString = new StringSelection(selection);
+          clipboard.setContents(clipString, clipString);
+          jta.replaceRange("", jta.getSelectionStart(), jta.getSelectionEnd());
+      }
+      else if (ae.getActionCommand().equals("Copy")) {
+    	  String selection = jta.getSelectedText();
+          StringSelection clipString = new StringSelection(selection);
+          clipboard.setContents(clipString, clipString);
+      }
+      else if (ae.getActionCommand().equals("Paste")) {
+	      Transferable clipData = clipboard.getContents(this);
+	      try {
+	          String clipString =
+	                  (String)clipData.getTransferData(
+	                  DataFlavor.stringFlavor);
+	          jta.replaceRange(clipString,
+	                  jta.getSelectionStart(), jta.getSelectionEnd());
+	      }
+	      catch(Exception ex){}
+      }
+      else if (ae.getActionCommand().equals("Select All")) {
     	  jta.selectAll();
       }
    }
