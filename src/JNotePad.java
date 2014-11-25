@@ -29,7 +29,7 @@ public class JNotePad implements ActionListener
    String openedFileName;
    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();   
    String stringToSearch = "";
-   int pos = 0;
+   int searchTextPosition = 0;
    //-------------------------------------------------------------------------- 
    JNotePad()
    {
@@ -294,33 +294,33 @@ public class JNotePad implements ActionListener
            try {
                boolean found = false;
                // Rest the search position if we're at the end of the document
-               if (pos + findLength > document.getLength()) {
-                   pos = 0;
+               if (searchTextPosition + findLength > document.getLength()) {
+                   searchTextPosition = 0;
                }
                // While we haven't reached the end...
                // "<=" Correction
-               while (pos + findLength <= document.getLength()) {
+               while (searchTextPosition + findLength <= document.getLength()) {
                    // Extract the text from teh docuemnt
-                   String match = document.getText(pos, findLength).toLowerCase();
+                   String match = document.getText(searchTextPosition, findLength).toLowerCase();
                    // Check to see if it matches or request
                    if (match.equals(target)) {
                        found = true;
                        break;
                    }
-                   pos++;
+                   searchTextPosition++;
                }
 
                // String found
                if (found) {
                    // Get the rectangle of the where the text would be visible...
-                   Rectangle viewRect = jta.modelToView(pos);
+                   Rectangle viewRect = jta.modelToView(searchTextPosition);
                    // Scroll to make the rectangle visible
                    jta.scrollRectToVisible(viewRect);
                    // Highlight the text
-                   jta.setCaretPosition(pos + findLength);
-                   jta.moveCaretPosition(pos);
+                   jta.setCaretPosition(searchTextPosition + findLength);
+                   jta.moveCaretPosition(searchTextPosition);
                    // Move the search position beyond the current match
-                   pos += findLength;
+                   searchTextPosition += findLength;
                }
            } catch (Exception exp) {}
        }
