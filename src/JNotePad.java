@@ -25,6 +25,7 @@ public class JNotePad implements ActionListener
    //Create instance of frame, area, and file
    JFrame jfrm;
    JTextArea jta;
+   JPopupMenu jpopup;
    File myFile;
    String openedFileName;
    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();   
@@ -51,7 +52,10 @@ public class JNotePad implements ActionListener
       //Set area
       setTextArea();
       setMenuBar();
+      setPopupMenu();
+      
    }
+	
    //--------------------------------------------------------------------------
    /*Returns the name of the file so it can be placed as title of frame.
     if the file name is null then set the name of the frame to "Untitled else
@@ -74,12 +78,53 @@ public class JNotePad implements ActionListener
       JScrollPane jsp = new JScrollPane(jta);
       jfrm.add(jsp);
    }
+   
+   public void setPopupMenu() {
+		// Create some menu items for the popup
+		JMenuItem popupCut = new JMenuItem( "Cut" );
+		JMenuItem popupCopy = new JMenuItem( "Copy" );
+		JMenuItem popupPaste = new JMenuItem( "Paste" );
+		
+		// Create a popup menu
+		jpopup = new JPopupMenu( "popup" );
+		jpopup.add( popupCut );
+		jpopup.add( popupCopy );
+		jpopup.add( popupPaste );
+		
+		jta.add(jpopup);
+		
+		// Action and mouse listener support
+		popupCut.addActionListener( this );
+		popupCopy.addActionListener( this );
+		popupPaste.addActionListener( this );
+
+	    //Add listener to components that can bring up popup menus.
+	    MouseListener popupListener = new PopupListener();
+	    jta.addMouseListener(popupListener);
+   }
+   
+   class PopupListener extends MouseAdapter {
+	    public void mousePressed(MouseEvent e) {
+	        maybeShowPopup(e);
+	    }
+
+	    public void mouseReleased(MouseEvent e) {
+	        maybeShowPopup(e);
+	    }
+
+	    private void maybeShowPopup(MouseEvent e) {
+	        if (e.isPopupTrigger()) {
+	        	jpopup.show(e.getComponent(),
+	                       e.getX(), e.getY());
+	        }
+	    }
+	}
+   
    //--------------------------------------------------------------------------
    /*Sets the menu bar for window. Also adds mneumonics for keboard short cuts.
     *Likewise, the items in drop down menu have mneumonics.
     */
-   public void setMenuBar()
-   {
+   public void setMenuBar() {
         JMenuBar menu = new JMenuBar();
         
         // File menu
