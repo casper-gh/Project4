@@ -11,8 +11,7 @@ package notepad;
 //
 
 import javax.swing.*;
-
-import notepad3.Notepad;
+import javax.swing.text.Document;
 
 import java.awt.*;
 import java.io.*;
@@ -28,8 +27,9 @@ public class JNotePad implements ActionListener
    JTextArea jta;
    File myFile;
    String openedFileName;
-   Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-  
+   Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();   
+   String stringToSearch = "";
+   int pos = 0;
    //-------------------------------------------------------------------------- 
    JNotePad()
    {
@@ -251,9 +251,79 @@ public class JNotePad implements ActionListener
 	      }
 	      catch(Exception ex){}
       }
+      else if (ae.getActionCommand().equals("Delete")) {
+			String selection = jta.getSelectedText();
+			jta.replaceRange("", jta.getSelectionStart(),
+					jta.getSelectionEnd());
+      }
+      else if (ae.getActionCommand().equals("Find...")) {	
+    	  JPanel pan=new JPanel();
+    	  pan.setLayout(new FlowLayout());
+    	  JDialog dialog = new JDialog(jfrm, "Find...");    	    
+    	  JButton findBtn = new JButton("Find Next");
+    	  final JTextField searchText = new JTextField();
+    	  pan.add(findBtn);
+    	  pan.add(searchText).setPreferredSize(new Dimension(100, 30));
+    	  dialog.add(pan);
+    	  dialog.setBounds(200, 200, 300, 100);
+    	  dialog.setVisible(true);
+    	  searchText.requestFocusInWindow();
+    	  JRootPane rootPane = SwingUtilities.getRootPane(findBtn); 
+    	  rootPane.setDefaultButton(findBtn);
+    	  findBtn.addActionListener(new ActionListener() {
+    		  public void actionPerformed(ActionEvent e) {
+    			  stringToSearch = searchText.getText().toLowerCase();
+    			  findString(stringToSearch);	
+    		  }
+    	  });	
+      }  
+      else if (ae.getActionCommand().equals("Find Next")) {			
+    	  findString(stringToSearch);			
+      }  
       else if (ae.getActionCommand().equals("Select All")) {
     	  jta.selectAll();
       }
+   }
+   
+   // Find string in JTextArea
+   public void findString(String target) {	   
+	   jta.requestFocusInWindow();
+	   if (target != null && target.length() > 0) {
+           Document document = jta.getDocument();
+           int findLength = target.length();
+           try {
+               boolean found = false;
+               // Rest the search position if we're at the end of the document
+               if (pos + findLength > document.getLength()) {
+                   pos = 0;
+               }
+               // While we haven't reached the end...
+               // "<=" Correction
+               while (pos + findLength <= document.getLength()) {
+                   // Extract the text from teh docuemnt
+                   String match = document.getText(pos, findLength).toLowerCase();
+                   // Check to see if it matches or request
+                   if (match.equals(target)) {
+                       found = true;
+                       break;
+                   }
+                   pos++;
+               }
+
+               // String found
+               if (found) {
+                   // Get the rectangle of the where the text would be visible...
+                   Rectangle viewRect = jta.modelToView(pos);
+                   // Scroll to make the rectangle visible
+                   jta.scrollRectToVisible(viewRect);
+                   // Highlight the text
+                   jta.setCaretPosition(pos + findLength);
+                   jta.moveCaretPosition(pos);
+                   // Move the search position beyond the current match
+                   pos += findLength;
+               }
+           } catch (Exception exp) {}
+       }
    }
    
    /*Opens a selected file and rename the frame to the corresponding file
