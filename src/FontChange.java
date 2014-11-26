@@ -47,14 +47,17 @@ class FontChange {
     	
         jdialog = new JDialog(parentJfrm, "AaBbYyZz", true);
         jdialog.setLayout(new FlowLayout());
-        jdialog.setSize(620, 375);
+	    FlowLayout flow = new FlowLayout();
+	    flow.setVgap(13);  
+	    JPanel infoPanel = new JPanel(flow);
+        jdialog.setSize(620, 350);
         jdialog.setLocationRelativeTo(parentJfrm);
         
         display = new JLabel("AaBbYyZz");
         displayPanel = new JPanel(new BorderLayout());
         displayPanel.add(display,BorderLayout.CENTER);
         display.setHorizontalAlignment(JTextField.CENTER);
-        displayPanel.setPreferredSize(new Dimension(595,100));
+        displayPanel.setPreferredSize(new Dimension(440,100));
         displayPanel.setBorder(BorderFactory.createEtchedBorder());
 
         fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
@@ -63,7 +66,6 @@ class FontChange {
         fontField = new JTextField();
         fontsList = new JList(fonts);
         JScrollPane fontSP = new JScrollPane(fontsList);
-        //fontSP.setPreferredSize(new Dimension(50,50));
         fontsList.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent le) {
                 int idx = fontsList.getSelectedIndex();
@@ -89,8 +91,7 @@ class FontChange {
                 catch(NumberFormatException nfe) {
                     isNum = false;
                 }
-                if(isNum)
-                {
+                if(isNum) {
                     size = temp;
                     display.setFont(new Font(font, style, size));
                 }
@@ -195,7 +196,7 @@ class FontChange {
         backgroundColorBTN.setHorizontalAlignment(JTextField.CENTER);
         bgColorPNL.setBackground(new Color(230, 226, 226));
         
-        JButton okBtn = new JButton ("OK");
+        JButton okBtn = new JButton ("   OK   ");
         okBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 jta.setFont(new Font(font, style, size));
@@ -210,16 +211,15 @@ class FontChange {
             public void actionPerformed(ActionEvent ae) {
             	jdialog.setVisible(false);
             }
-        });
+        });        
         
-        jdialog.add(displayPanel);
         jdialog.add(fontPnl);
         jdialog.add(sizePNL);
         jdialog.add(stylePnl);
         jdialog.add(bgColorPNL);
         jdialog.add(textColorPNL);
+        jdialog.add(displayPanel);
         jdialog.add(okBtn);
         jdialog.add(cancelBtn);
-        jdialog.setVisible(true);
     }
 }

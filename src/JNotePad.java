@@ -39,6 +39,7 @@ public class JNotePad implements ActionListener
       //Set name of frame
       jfrm = new JFrame(getOpenedFileName());
   
+  
       //Set frame size and layout
       jfrm.setSize(900, 600);
       jfrm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  
@@ -54,8 +55,10 @@ public class JNotePad implements ActionListener
       //Set area
       setTextArea();
       setMenuBar();
-      jfrm.setLocationRelativeTo(null); 
+      jfrm.setLocationRelativeTo(null);       
       
+      // Load fonts
+      myFont = new FontChange(jfrm, jta);      
    }
 	
    //--------------------------------------------------------------------------
@@ -316,7 +319,7 @@ public class JNotePad implements ActionListener
     	  else jta.setLineWrap(false);
       }
       else if (ae.getActionCommand().equals("Font...")) {			
-    	  myFont = new FontChange(jfrm, jta);		
+    	  myFont.jdialog.setVisible(true);	
       }  
    }
    
