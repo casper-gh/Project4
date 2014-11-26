@@ -12,11 +12,12 @@
 
 import javax.swing.*;
 import javax.swing.text.Document;
-
 import java.awt.*;
 import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Scanner;
-import java.io.File.*;
 import java.awt.datatransfer.*;
 import java.awt.event.*;
 
@@ -52,7 +53,7 @@ public class JNotePad implements ActionListener
       //Set area
       setTextArea();
       setMenuBar();
-      setPopupMenu();
+      jfrm.setLocationRelativeTo(null); 
       
    }
 	
@@ -60,8 +61,7 @@ public class JNotePad implements ActionListener
    /*Returns the name of the file so it can be placed as title of frame.
     if the file name is null then set the name of the frame to "Untitled else
     set the name of the frame to the name of the file.*/
-   public String getOpenedFileName() throws NullPointerException {
-      
+   public String getOpenedFileName() throws NullPointerException {      
       try {
          openedFileName = myFile.getName();
       }
@@ -77,30 +77,6 @@ public class JNotePad implements ActionListener
       jta = new JTextArea();
       JScrollPane jsp = new JScrollPane(jta);
       jfrm.add(jsp);
-   }
-   
-   public void setPopupMenu() {
-		// Create some menu items for the popup
-		JMenuItem popupCut = new JMenuItem( "Cut" );
-		JMenuItem popupCopy = new JMenuItem( "Copy" );
-		JMenuItem popupPaste = new JMenuItem( "Paste" );
-		
-		// Create a popup menu
-		jpopup = new JPopupMenu( "popup" );
-		jpopup.add( popupCut );
-		jpopup.add( popupCopy );
-		jpopup.add( popupPaste );
-		
-		jta.add(jpopup);
-		
-		// Action and mouse listener support
-		popupCut.addActionListener( this );
-		popupCopy.addActionListener( this );
-		popupPaste.addActionListener( this );
-
-	    //Add listener to components that can bring up popup menus.
-	    MouseListener popupListener = new PopupListener();
-	    jta.addMouseListener(popupListener);
    }
    
    class PopupListener extends MouseAdapter {
@@ -133,7 +109,7 @@ public class JNotePad implements ActionListener
         JMenuItem jmiOpen = new JMenuItem("Open...");
         JMenuItem jmiSave = new JMenuItem("Save");
         JMenuItem jmiSaveAs = new JMenuItem("Save As...");
-        JMenuItem jmiPageSetup = new JMenuItem("Page Setup...");        
+        JMenuItem jmiPageSetup = new JMenuItem("Page Setup...");    
         JMenuItem jmiPrint = new JMenuItem("Print...");
         JMenuItem jmiExit = new JMenuItem("Exit");        
         jmFile.add(jmiNew);
@@ -194,6 +170,17 @@ public class JNotePad implements ActionListener
         jmiEdit.add(jmiTimeDate);
         menu.add(jmiEdit);
         
+		// Create a popup menu
+		jpopup = new JPopupMenu( "popup" );
+		jpopup.add( jmiCut );
+		jpopup.add( jmiCopy );
+		jpopup.add( jmiPaste );		
+		jta.add(jpopup);
+
+	    //Add listener to components that can bring up popup menus.
+	    MouseListener popupListener = new PopupListener();
+	    jta.addMouseListener(popupListener);
+        
         //Set accelerator 
         jmiEdit.setMnemonic(KeyEvent.VK_E); 
         jmiCut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X,ActionEvent.CTRL_MASK));
@@ -218,7 +205,7 @@ public class JNotePad implements ActionListener
         
         // -- Format menu --
         JMenu jmiFormat = new JMenu("Format");
-        JMenuItem WordWrap = new JMenuItem("Word Wrap");
+        JMenuItem WordWrap = new JCheckBoxMenuItem("Word Wrap");
         JMenuItem Font = new JMenuItem("Font...");
         jmiFormat.add(WordWrap);
         jmiFormat.add(Font);
@@ -250,6 +237,16 @@ public class JNotePad implements ActionListener
         jmHelp.add(jmiAbout);               
         jmiAbout.addActionListener(this);        
         menu.add(jmHelp);
+        
+        // Disabled menu items
+        jmiPageSetup.setEnabled(false);
+        jmiPrint.setEnabled(false);
+        jmiUndo.setEnabled(false);
+        jmiReplace.setEnabled(false);
+        jmiGoTo.setEnabled(false);
+        jmiSelectAll.setEnabled(false);
+        jmiStatusBar.setEnabled(false);
+        jmiHelp.setEnabled(false);
         
         // Add menu to frame
         jfrm.setJMenuBar(menu);
@@ -297,37 +294,48 @@ public class JNotePad implements ActionListener
 	      catch(Exception ex){}
       }
       else if (ae.getActionCommand().equals("Delete")) {
-			String selection = jta.getSelectedText();
 			jta.replaceRange("", jta.getSelectionStart(),
 					jta.getSelectionEnd());
       }
       else if (ae.getActionCommand().equals("Find...")) {	
-    	  JPanel pan=new JPanel();
-    	  pan.setLayout(new FlowLayout());
-    	  JDialog dialog = new JDialog(jfrm, "Find...");    	    
-    	  JButton findBtn = new JButton("Find Next");
-    	  final JTextField searchText = new JTextField();
-    	  pan.add(findBtn);
-    	  pan.add(searchText).setPreferredSize(new Dimension(100, 30));
-    	  dialog.add(pan);
-    	  dialog.setBounds(200, 200, 300, 100);
-    	  dialog.setVisible(true);
-    	  searchText.requestFocusInWindow();
-    	  JRootPane rootPane = SwingUtilities.getRootPane(findBtn); 
-    	  rootPane.setDefaultButton(findBtn);
-    	  findBtn.addActionListener(new ActionListener() {
-    		  public void actionPerformed(ActionEvent e) {
-    			  stringToSearch = searchText.getText().toLowerCase();
-    			  findString(stringToSearch);	
-    		  }
-    	  });	
+    	  findText();
       }  
       else if (ae.getActionCommand().equals("Find Next")) {			
     	  findString(stringToSearch);			
       }  
-      else if (ae.getActionCommand().equals("Select All")) {
-    	  jta.selectAll();
+      else if (ae.getActionCommand().equals("Time/Date")) {		
+    	  DateFormat dateFormat = new SimpleDateFormat("h:mm a MM/dd/yyyy");
+    	  Date date = new Date();
+    	  String currentText = jta.getText();
+    	  jta.setText(currentText + dateFormat.format(date));	
+      }  
+      else if (ae.getActionCommand().equals("Word Wrap")) {
+    	  if (!jta.getLineWrap())
+    		  jta.setLineWrap(true);
+    	  else jta.setLineWrap(false);
       }
+   }
+   
+   public void findText() {
+	   JPanel pan=new JPanel();
+ 	  pan.setLayout(new FlowLayout());
+ 	  JDialog dialog = new JDialog(jfrm, "Find...");    	    
+ 	  JButton findBtn = new JButton("Find Next");
+ 	  final JTextField searchText = new JTextField();
+ 	  pan.add(findBtn);
+ 	  pan.add(searchText).setPreferredSize(new Dimension(100, 30));
+ 	  dialog.add(pan);
+ 	  dialog.setBounds(200, 200, 300, 100);
+ 	  dialog.setVisible(true);
+ 	  searchText.requestFocusInWindow();
+ 	  JRootPane rootPane = SwingUtilities.getRootPane(findBtn); 
+ 	  rootPane.setDefaultButton(findBtn);
+ 	  findBtn.addActionListener(new ActionListener() {
+ 		  public void actionPerformed(ActionEvent e) {
+ 			  stringToSearch = searchText.getText().toLowerCase();
+ 			  findString(stringToSearch);	
+ 		  }
+ 	  });	
    }
    
    // Find string in JTextArea
@@ -437,8 +445,7 @@ public class JNotePad implements ActionListener
        }
    }
    
-   public static void main(String [] args)
-   {
+   public static void main(String [] args) {
       SwingUtilities.invokeLater(new Runnable() { 
          public void run() {
             new JNotePad();
