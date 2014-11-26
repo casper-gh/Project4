@@ -32,6 +32,7 @@ public class JNotePad implements ActionListener
    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();   
    String stringToSearch = "";
    int searchTextPosition = 0;
+   FontChange myFont;
    //-------------------------------------------------------------------------- 
    JNotePad()
    {
@@ -314,6 +315,9 @@ public class JNotePad implements ActionListener
     		  jta.setLineWrap(true);
     	  else jta.setLineWrap(false);
       }
+      else if (ae.getActionCommand().equals("Font...")) {			
+    	  myFont = new FontChange(jfrm, jta);		
+      }  
    }
    
    public void findText() {

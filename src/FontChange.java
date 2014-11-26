@@ -1,4 +1,4 @@
-package FontAndColors;
+
 /*
  *		Group:		2
  *      Name:       Chiu, Chi Lung - Westerhoff, Bradley - Huang, Wayne - Tello, Eric
@@ -15,12 +15,13 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.event.*;
 
-class P07 implements ActionListener {
-    JFrame jfrm;
+class FontChange {
+    JDialog jdialog;
     JList fontsList, sizeList, styleList, bgColorList, textColorList;
     JLabel display;
     JPanel displayPanel;
     JTextField fontField, sizeField, styleField;
+    JTextArea jta;
 
     //The font, style and size of the display label
     String font;
@@ -41,14 +42,15 @@ class P07 implements ActionListener {
                       Color.PINK, Color.RED, Color.WHITE, Color.YELLOW};
     String[] colorSTR = {"Black", "Blue", "Cyan", "Dark Gray", "Gray", "Green", "Light Gray", "Magenta", "Orange", "Pink", "Red", "White", "Yellow"};
 
-    P07() {
-        jfrm = new JFrame("Font Changing");
-        jfrm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        jfrm.setLayout(new FlowLayout());
-        jfrm.setSize(620, 365);
-        jfrm.getContentPane().setBackground(new Color(230, 226, 226));
-
-        display = new JLabel("Font Demonstration");
+    FontChange(JFrame parentJfrm, JTextArea parentJta) {
+    	jta = parentJta;
+    	
+        jdialog = new JDialog(parentJfrm, "AaBbYyZz", true);
+        jdialog.setLayout(new FlowLayout());
+        jdialog.setSize(620, 375);
+        jdialog.setLocationRelativeTo(parentJfrm);
+        
+        display = new JLabel("AaBbYyZz");
         displayPanel = new JPanel(new BorderLayout());
         displayPanel.add(display,BorderLayout.CENTER);
         display.setHorizontalAlignment(JTextField.CENTER);
@@ -137,13 +139,12 @@ class P07 implements ActionListener {
         stylePnl.add(styleSP, BorderLayout.CENTER);
         stylePnl.setPreferredSize(new Dimension(60, 189));
 
-
         //Text Color
         JLabel textColorLab = new JLabel("Choose Text Color");
         JButton textColorBTN = new JButton ("More Options");
         textColorBTN.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                Color color = JColorChooser.showDialog(jfrm, "Choose Color", textColor);
+                Color color = JColorChooser.showDialog(jdialog, "Choose Color", textColor);
                 textColor = color;
                 display.setForeground(textColor);
             }
@@ -171,7 +172,7 @@ class P07 implements ActionListener {
         JButton backgroundColorBTN = new JButton ("More Options");
         backgroundColorBTN.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                Color color = JColorChooser.showDialog(jfrm, "Choose Color", bgColor);
+                Color color = JColorChooser.showDialog(jdialog, "Choose Color", bgColor);
                 bgColor = color;
                 displayPanel.setBackground(bgColor);
             }
@@ -193,54 +194,32 @@ class P07 implements ActionListener {
         bgColorPNL.add(backgroundColorBTN, BorderLayout.SOUTH);
         backgroundColorBTN.setHorizontalAlignment(JTextField.CENTER);
         bgColorPNL.setBackground(new Color(230, 226, 226));
-
-        //Menu
-        JMenuBar jmb = new JMenuBar();
-        //File Menu
-        JMenu fileMenu = new JMenu("File");
-        //Exit Button - Accelerator to Ctrl+X
-        JMenuItem jmiExit = new JMenuItem("Exit",KeyEvent.VK_X);
-        jmiExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK));
-        jmiExit.addActionListener(this);
-        fileMenu.add(jmiExit);
-        //Help menu
-        JMenu helpMenu = new JMenu("Help");
-        //About Button - Shows information
-        JMenuItem jmiAbout = new JMenuItem("About", KeyEvent.VK_A);
-        jmiAbout.addActionListener(this);
-        //Compiling menu bars
-        helpMenu.add(jmiAbout);
-        jmb.add(fileMenu);
-        jmb.add(helpMenu);
-
-        jfrm.setJMenuBar(jmb);
-        jfrm.add(displayPanel);
-        jfrm.add(fontPnl);
-        jfrm.add(sizePNL);
-        jfrm.add(stylePnl);
-        jfrm.add(bgColorPNL);
-        jfrm.add(textColorPNL);
-
-        jfrm.setResizable(false);
-        jfrm.setVisible(true);
-    }
-
-    public void actionPerformed(ActionEvent ae)
-    {
-        System.out.println(jfrm.getSize());
-        String cmd = ae.getActionCommand().toLowerCase();
-        if(cmd.equals("exit"))
-            System.exit(0);
-        if(cmd.equals("about"))
-            JOptionPane.showMessageDialog(jfrm, "<html> Team: <br> Alex Chiu <br> Bradley Westerhoff  <br> Wayne Huang <br> Eric Tello", "About", JOptionPane.INFORMATION_MESSAGE);
-    }
-
-    public static void main(String[] args)
-    {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                new P07();
+        
+        JButton okBtn = new JButton ("OK");
+        okBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                jta.setFont(new Font(font, style, size));
+                jta.setForeground(textColor);
+                jta.setBackground(bgColor);
+            	jdialog.setVisible(false);
             }
         });
+        
+        JButton cancelBtn = new JButton ("Cancel");
+        cancelBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+            	jdialog.setVisible(false);
+            }
+        });
+        
+        jdialog.add(displayPanel);
+        jdialog.add(fontPnl);
+        jdialog.add(sizePNL);
+        jdialog.add(stylePnl);
+        jdialog.add(bgColorPNL);
+        jdialog.add(textColorPNL);
+        jdialog.add(okBtn);
+        jdialog.add(cancelBtn);
+        jdialog.setVisible(true);
     }
 }
