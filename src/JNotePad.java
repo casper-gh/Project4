@@ -1,5 +1,3 @@
-
-
 //
 //Name:    Nguyen, Lam
 //Project: #4
@@ -11,6 +9,7 @@
 //
 
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.text.Document;
 import java.awt.*;
 import java.io.*;
@@ -21,91 +20,56 @@ import java.util.Scanner;
 import java.awt.datatransfer.*;
 import java.awt.event.*;
 
-public class JNotePad implements ActionListener
-{
-   //Create instance of frame, area, and file
-   JFrame jfrm;
-   JTextArea jta;
-   JPopupMenu jpopup;
-   File myFile;
-   String openedFileName;
-   Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();   
-   String stringToSearch = "";
-   int searchTextPosition = 0;
-   FontChange myFont;
-   //-------------------------------------------------------------------------- 
-   JNotePad()
-   {
-      //Set name of frame
-      jfrm = new JFrame(getOpenedFileName());
-  
-  
-      //Set frame size and layout
-      jfrm.setSize(900, 600);
-      jfrm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  
-
-      jfrm.setLayout(new GridLayout(1, 1));
-     
-      //Set close operation for frame
-      jfrm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    
-      //Set frame to visisble
-      jfrm.setVisible(true);
-     
-      //Set area
-      setTextArea();
-      setMenuBar();
-      jfrm.setLocationRelativeTo(null);       
-      
-      // Load fonts
-      myFont = new FontChange(jfrm, jta);      
-   }
-	
-   //--------------------------------------------------------------------------
-   /*Returns the name of the file so it can be placed as title of frame.
-    if the file name is null then set the name of the frame to "Untitled else
-    set the name of the frame to the name of the file.*/
-   public String getOpenedFileName() throws NullPointerException {      
-      try {
-         openedFileName = myFile.getName();
-      }
-      catch(NullPointerException e) {
-         openedFileName = "JNotepad";
-      }
-      return openedFileName;
-   }
-   //--------------------------------------------------------------------------
-   /*Add the text area to the frame. And add scroll bar*/
-   public void setTextArea()
-   {
-      jta = new JTextArea();
-      JScrollPane jsp = new JScrollPane(jta);
-      jfrm.add(jsp);
-   }
+public class JNotePad implements ActionListener {
    
-   class PopupListener extends MouseAdapter {
-	    public void mousePressed(MouseEvent e) {
-	        maybeShowPopup(e);
-	    }
+	JFrame jfrm;
+	JTextArea jta;
+	JPopupMenu jpopup;
+	File myFile;
+	String openedFileName;
+	Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();   
+	String stringToSearch = "";
+	int searchTextPosition = 0;
+	FontOptions myFont;
 
-	    public void mouseReleased(MouseEvent e) {
-	        maybeShowPopup(e);
-	    }
+	JNotePad() {
+	   
+		jfrm = new JFrame(getOpenedFileName());  
+  
+		//Set frame size and layout
+		jfrm.setSize(900, 600);
+		jfrm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  
+		jfrm.setLayout(new GridLayout(1, 1));
+		jfrm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		jfrm.setVisible(true);
+     
+		//Set area
+		setTextArea();
+		setMenus();
+		jfrm.setLocationRelativeTo(null);       
+      
+		// Load fonts
+		myFont = new FontOptions(jfrm, jta);      
+	}
+	
+	public String getOpenedFileName() throws NullPointerException {      
+		try {
+			openedFileName = myFile.getName();
+		}
+		catch(NullPointerException e) {
+			openedFileName = "JNotepad";
+		}
+		return openedFileName;
+	}
 
-	    private void maybeShowPopup(MouseEvent e) {
-	        if (e.isPopupTrigger()) {
-	        	jpopup.show(e.getComponent(),
-	                       e.getX(), e.getY());
-	        }
-	    }
+	public void setTextArea() {
+		jta = new JTextArea();
+		JScrollPane jsp = new JScrollPane(jta);
+		jfrm.add(jsp);
 	}
    
-   //--------------------------------------------------------------------------
-   /*Sets the menu bar for window. Also adds mneumonics for keboard short cuts.
-    *Likewise, the items in drop down menu have mneumonics.
-    */
-   public void setMenuBar() {
-        JMenuBar menu = new JMenuBar();
+	public void setMenus() {
+		JMenuBar menu = new JMenuBar();
         
         // File menu
         JMenu jmFile = new JMenu("File");         
@@ -256,94 +220,90 @@ public class JNotePad implements ActionListener
         jfrm.setJMenuBar(menu);
    }   
   
-   /*Action is triggered by selecting an item in the menu bar drop down list.*/
-   public void actionPerformed(ActionEvent ae) 
-   {
-	  // File menu
-      if(ae.getActionCommand().equals("New")) new JNotePad();
-      else if(ae.getActionCommand().equals("Open...")) openJFileChooser();
-      else if(ae.getActionCommand().equals("Exit")) System.exit(0); 
-      else if(ae.getActionCommand().equals("About JNotepad")) {
-         JOptionPane.showMessageDialog(jfrm, "(c) Lam Nguyen");
-      }
-      else if (ae.getActionCommand().equals("Save")) {
-    	  if (myFile==null) saveJFileChooser();
-    	  else saveFileOverwrite();
-      }
-      else if (ae.getActionCommand().equals("Save As...")) {
-    	  saveJFileChooser();
-      }
+	public void actionPerformed(ActionEvent ae) {
+		// File menu
+		if(ae.getActionCommand().equals("New")) new JNotePad();
+		else if(ae.getActionCommand().equals("Open...")) openJFileChooser();
+		else if(ae.getActionCommand().equals("Exit")) System.exit(0); 
+		else if(ae.getActionCommand().equals("About JNotepad")) {
+			JOptionPane.showMessageDialog(jfrm, "(c) Lam Nguyen");
+		}
+		else if (ae.getActionCommand().equals("Save")) {
+			if (myFile==null) saveJFileChooser();
+			else saveFileOverwrite();
+		}
+		else if (ae.getActionCommand().equals("Save As...")) {
+			saveJFileChooser();
+		}
       
-      // Edit menu
-      if (ae.getActionCommand().equals("Cut")) {
-    	  String selection = jta.getSelectedText();
-          StringSelection clipString = new StringSelection(selection);
-          clipboard.setContents(clipString, clipString);
-          jta.replaceRange("", jta.getSelectionStart(), jta.getSelectionEnd());
-      }
-      else if (ae.getActionCommand().equals("Copy")) {
-    	  String selection = jta.getSelectedText();
-          StringSelection clipString = new StringSelection(selection);
-          clipboard.setContents(clipString, clipString);
-      }
-      else if (ae.getActionCommand().equals("Paste")) {
-	      Transferable clipData = clipboard.getContents(this);
-	      try {
-	          String clipString =
-	                  (String)clipData.getTransferData(
-	                  DataFlavor.stringFlavor);
-	          jta.replaceRange(clipString,
-	                  jta.getSelectionStart(), jta.getSelectionEnd());
-	      }
-	      catch(Exception ex){}
-      }
-      else if (ae.getActionCommand().equals("Delete")) {
-			jta.replaceRange("", jta.getSelectionStart(),
-					jta.getSelectionEnd());
-      }
-      else if (ae.getActionCommand().equals("Find...")) {	
-    	  findText();
-      }  
-      else if (ae.getActionCommand().equals("Find Next")) {			
-    	  findString(stringToSearch);			
-      }  
-      else if (ae.getActionCommand().equals("Time/Date")) {		
-    	  DateFormat dateFormat = new SimpleDateFormat("h:mm a MM/dd/yyyy");
-    	  Date date = new Date();
-    	  String currentText = jta.getText();
-    	  jta.setText(currentText + dateFormat.format(date));	
-      }  
-      else if (ae.getActionCommand().equals("Word Wrap")) {
-    	  if (!jta.getLineWrap())
-    		  jta.setLineWrap(true);
-    	  else jta.setLineWrap(false);
-      }
-      else if (ae.getActionCommand().equals("Font...")) {			
-    	  myFont.jdialog.setVisible(true);	
-      }  
-   }
+		// Edit menu
+		if (ae.getActionCommand().equals("Cut")) {
+			String selection = jta.getSelectedText();
+			StringSelection clipString = new StringSelection(selection);
+			clipboard.setContents(clipString, clipString);
+			jta.replaceRange("", jta.getSelectionStart(), jta.getSelectionEnd());
+		}
+		else if (ae.getActionCommand().equals("Copy")) {
+			String selection = jta.getSelectedText();
+			StringSelection clipString = new StringSelection(selection);
+			clipboard.setContents(clipString, clipString);
+		}
+		else if (ae.getActionCommand().equals("Paste")) {
+			Transferable clipData = clipboard.getContents(this);
+			try {
+				String clipString =
+						(String)clipData.getTransferData(DataFlavor.stringFlavor);
+				jta.replaceRange(clipString, jta.getSelectionStart(), jta.getSelectionEnd());
+			}
+			catch(Exception ex){}
+		}
+		else if (ae.getActionCommand().equals("Delete")) {
+				jta.replaceRange("", jta.getSelectionStart(),
+						jta.getSelectionEnd());
+		}
+		else if (ae.getActionCommand().equals("Find...")) {	
+			findText();
+		}  
+		else if (ae.getActionCommand().equals("Find Next")) {			
+			findString(stringToSearch);			
+		}  
+		else if (ae.getActionCommand().equals("Time/Date")) {		
+			DateFormat dateFormat = new SimpleDateFormat("h:mm a MM/dd/yyyy");
+			Date date = new Date();
+			String currentText = jta.getText();
+			jta.setText(currentText + dateFormat.format(date));	
+		}  
+		else if (ae.getActionCommand().equals("Word Wrap")) {
+			if (!jta.getLineWrap())
+				jta.setLineWrap(true);
+			else jta.setLineWrap(false);
+		}
+		else if (ae.getActionCommand().equals("Font...")) {			
+			myFont.jdlg.setVisible(true);	
+		}  
+	}
    
-   public void findText() {
+	public void findText() {
 	   JPanel pan=new JPanel();
- 	  pan.setLayout(new FlowLayout());
- 	  JDialog dialog = new JDialog(jfrm, "Find...");    	    
- 	  JButton findBtn = new JButton("Find Next");
- 	  final JTextField searchText = new JTextField();
- 	  pan.add(findBtn);
- 	  pan.add(searchText).setPreferredSize(new Dimension(100, 30));
- 	  dialog.add(pan);
- 	  dialog.setBounds(200, 200, 300, 100);
- 	  dialog.setVisible(true);
- 	  searchText.requestFocusInWindow();
- 	  JRootPane rootPane = SwingUtilities.getRootPane(findBtn); 
- 	  rootPane.setDefaultButton(findBtn);
- 	  findBtn.addActionListener(new ActionListener() {
- 		  public void actionPerformed(ActionEvent e) {
- 			  stringToSearch = searchText.getText().toLowerCase();
- 			  findString(stringToSearch);	
- 		  }
- 	  });	
-   }
+	   pan.setLayout(new FlowLayout());
+	   JDialog dialog = new JDialog(jfrm, "Find...");    	    
+	   JButton findBtn = new JButton("Find Next");
+	   final JTextField searchText = new JTextField();
+	   pan.add(findBtn);
+	   pan.add(searchText).setPreferredSize(new Dimension(100, 30));
+	   dialog.add(pan);
+	   dialog.setBounds(200, 200, 300, 100);
+	   dialog.setVisible(true);
+	   searchText.requestFocusInWindow();
+	   JRootPane rootPane = SwingUtilities.getRootPane(findBtn); 
+	   rootPane.setDefaultButton(findBtn);
+	   findBtn.addActionListener(new ActionListener() {
+		   public void actionPerformed(ActionEvent e) {
+			   stringToSearch = searchText.getText().toLowerCase();
+			   findString(stringToSearch);	
+		   }
+	   });	
+	}
    
    // Find string in JTextArea
    public void findString(String target) {	   
@@ -353,47 +313,31 @@ public class JNotePad implements ActionListener
            int findLength = target.length();
            try {
                boolean found = false;
-               // Rest the search position if we're at the end of the document
                if (searchTextPosition + findLength > document.getLength()) {
                    searchTextPosition = 0;
                }
-               // While we haven't reached the end...
-               // "<=" Correction
                while (searchTextPosition + findLength <= document.getLength()) {
-                   // Extract the text from teh docuemnt
                    String match = document.getText(searchTextPosition, findLength).toLowerCase();
-                   // Check to see if it matches or request
                    if (match.equals(target)) {
                        found = true;
                        break;
                    }
                    searchTextPosition++;
                }
-
-               // String found
                if (found) {
-                   // Get the rectangle of the where the text would be visible...
                    Rectangle viewRect = jta.modelToView(searchTextPosition);
-                   // Scroll to make the rectangle visible
-                   jta.scrollRectToVisible(viewRect);
-                   // Highlight the text
                    jta.setCaretPosition(searchTextPosition + findLength);
                    jta.moveCaretPosition(searchTextPosition);
-                   // Move the search position beyond the current match
                    searchTextPosition += findLength;
                }
            } catch (Exception exp) {}
        }
    }
    
-   /*Opens a selected file and rename the frame to the corresponding file
-    * name.
-    */
-   public void openJFileChooser() 
-   {
+   public void openJFileChooser() {
       try {
          JFileChooser openChooser = new JFileChooser();
-         openChooser.setFileFilter(new TextFileFilter());
+         openChooser.setFileFilter(new Filter());
          int userSelection = openChooser.showOpenDialog(null);
          if(userSelection != JFileChooser.APPROVE_OPTION) {
             jta.setText("");
@@ -419,7 +363,7 @@ public class JNotePad implements ActionListener
    
    public void saveJFileChooser() {
 	   JFileChooser saveChooser = new JFileChooser();
-	   saveChooser.setFileFilter(new TextFileFilter());
+	   saveChooser.setFileFilter(new Filter());
 	   int userSelection = saveChooser.showSaveDialog(jfrm);
 	    
 	   if (userSelection == JFileChooser.APPROVE_OPTION) {
@@ -452,11 +396,38 @@ public class JNotePad implements ActionListener
        }
    }
    
-   public static void main(String [] args) {
-      SwingUtilities.invokeLater(new Runnable() { 
-         public void run() {
-            new JNotePad();
-         }
-      });
-   }
+   class PopupListener extends MouseAdapter {
+	    public void mousePressed(MouseEvent e) {
+	        maybeShowPopup(e);
+	    }
+
+	    public void mouseReleased(MouseEvent e) {
+	        maybeShowPopup(e);
+	    }
+
+	    private void maybeShowPopup(MouseEvent e) {
+	        if (e.isPopupTrigger()) {
+	        	jpopup.show(e.getComponent(), e.getX(), e.getY());
+	        }
+	    }
+	}
+  
+	class Filter extends FileFilter {
+		public boolean accept(File file) {
+			if(file.getName().endsWith("txt"))
+				return true;
+			else return false;
+		}      
+		public String getDescription() {
+			return ".txt";
+		}      
+	}
+   
+	public static void main(String [] args) {
+		SwingUtilities.invokeLater(new Runnable() { 
+			public void run() {
+				new JNotePad();
+			}
+		});
+	}
 }
