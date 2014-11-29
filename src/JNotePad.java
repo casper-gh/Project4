@@ -38,9 +38,8 @@ public class JNotePad implements ActionListener {
   
 		//Set frame size and layout
 		jfrm.setSize(900, 600);
-		jfrm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  
+//		jfrm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  
 		jfrm.setLayout(new GridLayout(1, 1));
-		jfrm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		jfrm.setVisible(true);
      
 		//Set area
@@ -95,7 +94,7 @@ public class JNotePad implements ActionListener {
         jmiNew.setMnemonic(KeyEvent.VK_N);
         jmiPageSetup.setMnemonic(KeyEvent.VK_U);
         jmFile.setMnemonic(KeyEvent.VK_F);        
-        jmiExit.setMnemonic(KeyEvent.VK_E);
+        jmiExit.setMnemonic(KeyEvent.VK_X);
         
         //Set accelerator 
         jmiNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,ActionEvent.CTRL_MASK));
@@ -139,11 +138,17 @@ public class JNotePad implements ActionListener {
         menu.add(jmiEdit);
         
 		// Create a popup menu
-		jpopup = new JPopupMenu( "popup" );
-		jpopup.add( jmiCut );
-		jpopup.add( jmiCopy );
-		jpopup.add( jmiPaste );		
+		jpopup = new JPopupMenu( "popup" );		
+        JMenuItem jmiCutPopup = new JMenuItem("Cut");
+        JMenuItem jmiCopyPopup = new JMenuItem("Copy");
+        JMenuItem jmiPastePopup = new JMenuItem("Paste");		
+		jpopup.add( jmiCutPopup );
+		jpopup.add( jmiCopyPopup );
+		jpopup.add( jmiPastePopup );		
 		jta.add(jpopup);
+        jmiCutPopup.addActionListener(this);
+        jmiCopyPopup.addActionListener(this);
+        jmiPastePopup.addActionListener(this);
 
 	    //Add listener to components that can bring up popup menus.
 	    MouseListener popupListener = new PopupListener();
@@ -237,7 +242,7 @@ public class JNotePad implements ActionListener {
 		}
       
 		// Edit menu
-		if (ae.getActionCommand().equals("Cut")) {
+		if (ae.getActionCommand().equals("Cut") || ae.getActionCommand().equals("Cut-")) {
 			String selection = jta.getSelectedText();
 			StringSelection clipString = new StringSelection(selection);
 			clipboard.setContents(clipString, clipString);
