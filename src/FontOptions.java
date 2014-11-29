@@ -34,7 +34,6 @@ class FontOptions {
         jdlg.setLayout(new FlowLayout());
 	    FlowLayout flow = new FlowLayout();
 	    flow.setVgap(13);  
-	    JPanel infoPanel = new JPanel(flow);
         jdlg.setSize(620, 350);
         jdlg.setLocationRelativeTo(parentJfrm);
         
