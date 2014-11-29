@@ -33,9 +33,14 @@ public class JNotePad implements ActionListener {
 	FontOptions myFont;
 
 	JNotePad() {
-	   
+		
+		// Icon
+		ImageIcon icon = new ImageIcon("JNotepad.png");	
+		
 		jfrm = new JFrame(getOpenedFileName());  
-  
+		
+		// Set the program icon
+		jfrm.setIconImage(icon.getImage());
 		//Set frame size and layout
 		jfrm.setSize(900, 600);
 //		jfrm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  
@@ -45,8 +50,8 @@ public class JNotePad implements ActionListener {
 		//Set area
 		setTextArea();
 		setMenus();
-		jfrm.setLocationRelativeTo(null);       
-      
+		jfrm.setLocationRelativeTo(null);   
+		
 		// Load fonts
 		myFont = new FontOptions(jfrm, jta);      
 	}
@@ -158,7 +163,7 @@ public class JNotePad implements ActionListener {
         jmiEdit.setMnemonic(KeyEvent.VK_E); 
         jmiCut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X,ActionEvent.CTRL_MASK));
         jmiCopy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,ActionEvent.CTRL_MASK));
-        jmiPaste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,ActionEvent.CTRL_MASK));       
+        jmiPaste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V,ActionEvent.CTRL_MASK));       
         jmiDelete.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0));
         jmiFind.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F,ActionEvent.CTRL_MASK)); 
         jmiReplace.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H,ActionEvent.CTRL_MASK));
@@ -193,7 +198,7 @@ public class JNotePad implements ActionListener {
         WordWrap.addActionListener(this);
         Font.addActionListener(this);
         
-        // -- Help view --
+        // Help view
         JMenu jmView = new JMenu("View");
         JMenuItem jmiStatusBar = new JMenuItem("Status Bar");
         jmView.add(jmiStatusBar);        
@@ -209,9 +214,11 @@ public class JNotePad implements ActionListener {
         jmHelp.add(new JSeparator());
         jmHelp.add(jmiAbout);               
         jmiAbout.addActionListener(this);        
-        menu.add(jmHelp);
+        menu.add(jmHelp);        
+        jmHelp.setMnemonic(KeyEvent.VK_H); 
+        jmiHelp.setMnemonic(KeyEvent.VK_H); 
         
-        // Disabled menu items
+        // Disabled menu items        
         jmiPageSetup.setEnabled(false);
         jmiPrint.setEnabled(false);
         jmiUndo.setEnabled(false);
