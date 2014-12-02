@@ -46,7 +46,8 @@ public class JNotePad implements ActionListener {
 //		jfrm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  
 		jfrm.setLayout(new GridLayout(1, 1));
 		jfrm.setVisible(true);
-     
+                jfrm.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+                
 		//Set area
 		setTextArea();
 		setMenus();
@@ -228,70 +229,57 @@ public class JNotePad implements ActionListener {
         jmiStatusBar.setEnabled(false);
         jmiHelp.setEnabled(false);
         
+        // Handle closing frame
+        jfrm.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+               saveOnExit();
+            }
+        });
+        
         // Add menu to frame
         jfrm.setJMenuBar(menu);
    }   
+        
+        public void saveOnExit() {
+            if (myFile==null && !jta.getText().equals("")) {
+                int result = JOptionPane.showConfirmDialog(jfrm, "Do you want to save changes to JNotepad?" );
+                if (result == 0) {
+                    saveJFileChooser();
+                    jfrm.dispose();
+                }    
+                else if (result == 1) jfrm.dispose();
+            }
+            else jfrm.dispose();    
+        }
   
 	public void actionPerformed(ActionEvent ae) {
-		// File menu
-		if(ae.getActionCommand().equals("New")) new JNotePad();
-		else if(ae.getActionCommand().equals("Open...")) openJFileChooser();
-		else if(ae.getActionCommand().equals("Exit")) System.exit(0); 
-		else if(ae.getActionCommand().equals("About JNotepad")) {
-			JOptionPane.showMessageDialog(jfrm, "(c) Lam Nguyen");
-		}
-		else if (ae.getActionCommand().equals("Save")) {
-			if (myFile==null) saveJFileChooser();
-			else saveFileOverwrite();
-		}
-		else if (ae.getActionCommand().equals("Save As...")) {
-			saveJFileChooser();
-		}
-      
-		// Edit menu
-		if (ae.getActionCommand().equals("Cut") || ae.getActionCommand().equals("Cut-")) {
-			String selection = jta.getSelectedText();
-			StringSelection clipString = new StringSelection(selection);
-			clipboard.setContents(clipString, clipString);
-			jta.replaceRange("", jta.getSelectionStart(), jta.getSelectionEnd());
-		}
-		else if (ae.getActionCommand().equals("Copy")) {
-			String selection = jta.getSelectedText();
-			StringSelection clipString = new StringSelection(selection);
-			clipboard.setContents(clipString, clipString);
-		}
-		else if (ae.getActionCommand().equals("Paste")) {
-			Transferable clipData = clipboard.getContents(this);
-			try {
-				String clipString =
-						(String)clipData.getTransferData(DataFlavor.stringFlavor);
-				jta.replaceRange(clipString, jta.getSelectionStart(), jta.getSelectionEnd());
-			}
-			catch(Exception ex){}
-		}
-		else if (ae.getActionCommand().equals("Delete")) {
-				jta.replaceRange("", jta.getSelectionStart(),
-						jta.getSelectionEnd());
-		}
-		else if (ae.getActionCommand().equals("Find...")) {	
-			findText();
-		}  
-		else if (ae.getActionCommand().equals("Find Next")) {			
-			findString(stringToSearch);			
-		}  
-		else if (ae.getActionCommand().equals("Time/Date")) {		
-			DateFormat dateFormat = new SimpleDateFormat("h:mm a MM/dd/yyyy");
-			Date date = new Date();
-			String currentText = jta.getText();
-			jta.setText(currentText + dateFormat.format(date));	
-		}  
-		else if (ae.getActionCommand().equals("Word Wrap")) {
-			if (!jta.getLineWrap())
-				jta.setLineWrap(true);
-			else jta.setLineWrap(false);
-		}
-		else if (ae.getActionCommand().equals("Font...")) {			
-			myFont.jdlg.setVisible(true);	
+            switch(ae.getActionCommand()) {
+                case "New": new JNotePad(); break;
+                case "Open...": openJFileChooser(); break;
+                case "Exit": saveOnExit(); break;
+                case "About JNotepad": JOptionPane.showMessageDialog(jfrm, "(c) Lam Nguyen"); break;
+                case "Save":    if (myFile==null) saveJFileChooser();
+                                else saveFileOverwrite();
+                                break;
+                case "Save As...": saveJFileChooser(); break;
+                case "Cut": jta.cut(); break;
+		case "Copy": jta.copy(); break;
+                case "Paste": jta.paste(); break;
+                case "Delete": jta.replaceRange("", jta.getSelectionStart(), jta.getSelectionEnd()); break;
+                case "Find...": findText(); break;
+                case "Find Next": findString(stringToSearch); break;
+                case "Time/Date":   DateFormat dateFormat = new SimpleDateFormat("h:mm a MM/dd/yyyy");
+                                    Date date = new Date();
+                                    String currentText = jta.getText();
+                                    jta.setText(currentText + dateFormat.format(date));	
+                                    break;
+		
+                case "Word Wrap":   if (!jta.getLineWrap())
+                                            jta.setLineWrap(true);
+                                    else jta.setLineWrap(false);
+                                    break;
+		
+                case "Font...": myFont.jdlg.setVisible(true); break;
 		}  
 	}
    
@@ -337,7 +325,7 @@ public class JNotePad implements ActionListener {
                    searchTextPosition++;
                }
                if (found) {
-                   Rectangle viewRect = jta.modelToView(searchTextPosition);
+//                   Rectangle viewRect = jta.modelToView(searchTextPosition);
                    jta.setCaretPosition(searchTextPosition + findLength);
                    jta.moveCaretPosition(searchTextPosition);
                    searchTextPosition += findLength;
