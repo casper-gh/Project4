@@ -35,6 +35,7 @@ class FontOptions {
 	    FlowLayout flow = new FlowLayout();
 	    flow.setVgap(13);  
         jdlg.setSize(620, 350);
+        jdlg.setResizable(false);
         jdlg.setLocationRelativeTo(parentJfrm);
         
         jlbl = new JLabel("AaBbYyZz");
