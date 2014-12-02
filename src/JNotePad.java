@@ -382,12 +382,15 @@ public class JNotePad implements ActionListener {
 	       File fileToSave = saveChooser.getSelectedFile();
 	       System.out.println("Save as file: " + fileToSave.getAbsolutePath());
 	       try {
-	    	   BufferedWriter out = new BufferedWriter(new FileWriter(fileToSave+".txt"));	        
-	           out.write(jta.getText());	
-	           out.close();
+	    	   PrintWriter out = new PrintWriter(new FileWriter(fileToSave+".txt"));
+                   Scanner scan = new Scanner(jta.getText());
+                   while (scan.hasNext()) {
+                        String str = scan.nextLine();
+                        out.println(str);
+                   }
+                   out.close();
 	           myFile = fileToSave;
-	           jfrm.setTitle(getOpenedFileName());
-	           
+	           jfrm.setTitle(getOpenedFileName());	           
 	       }      
 	       catch(Exception e) {
 	           JOptionPane.showMessageDialog(jfrm, "Cannot save file...");
@@ -398,8 +401,12 @@ public class JNotePad implements ActionListener {
    
    public void saveFileOverwrite() {
        try {
-    	   BufferedWriter out = new BufferedWriter(new FileWriter(myFile));
-           out.write(jta.getText());
+    	   PrintWriter out = new PrintWriter(new FileWriter(myFile+".txt"));
+           Scanner scan = new Scanner(jta.getText());
+           while (scan.hasNext()) {
+               String str = scan.nextLine();
+               out.println(str);
+           }
            out.close();
        }      
        catch(Exception e) {
